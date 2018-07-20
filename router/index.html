@@ -57,36 +57,56 @@
   <script src="/socket.io/socket.io.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
   <script>
+    data = (name, value) => {
+      const params = JSON.stringify(encodeURI({ name: value }));
+      fetch("/chat/chatdata/?" + params, {
+        method: 'get'
+      }
+      ).then(response => {
+        return console.log("response", response);
+      }).catch(error => {
+        console.log("error", error);
+      })
+    }
     $(function () {
       let socket = io();
-      $('form').submit(() => {
-        socket.emit('chat message', $('#message').val(), $('#formUser').val(), $('#toUser').val())
-        $('#message').val('');
-        $('#formUser').val();
-        $('#toUser').val();
-        return false;
-      })
+      // $('form').submit(() => {
+      // socket.emit('chat message', $('#message').val(), $('#formUser').val(), $('#toUser').val(), $(location).attr("href"))
+      // $('#message').val('');
+      // $('#formUser').val();
+      // $('#toUser').val();
+      // return false;
+      // })
       let formData = $('#formUser').val();
       $('#formUser').ready(() => {
         $('#formUser').keyup((formData) => {
-          socket.emit('find user', $('#formUser').val());
-          $('#formUser').val();
-          return false;
+          action = "http://localhost:3000/chat/chatdata"
+          method = "post"
+        });
+
+      })
+      socket.on('chat messages display', (msg, name, url) => {
+        $('form').ready(() => {
+          $(location).attr("href") == url &&
+            $('#messages').append($('<li>').text(`${name} : ${msg}`))
         })
       })
-      socket.on('chat messages display', (msg, name) => {
-        $('#messages').append($('<li>').text(`${name} : ${msg}`))
-      })
+      // $($(location).attr("href")).unload(() => {
+      socket.on('chat', () => { })
+      // (msg, toUser, toUsername, fromUsername, fromUser, url) => {
+      //   ($('#formUser').val() == toUsername || $('#formUser').val() == fromUsername) && $('#messages').append($('<li>').text(`${$(location).attr("href") == url ? toUser : fromUser} : ${msg}`))
+      // })
+      // })
     });
   </script>
 </head>
 
 <body>
   <ul id="messages"></ul>
-  <form action="">
-    <input id="formUser" autocomplete="off" placeholder="From" />
-    <input id="toUser" autocomplete="off" placeholder="To" />
-    <input id="message" autocomplete="off" placeholder="message ..." />
+  <form action="http://localhost:3000/chat/messages" method="post">
+    <input id="formUser" autocomplete="off" placeholder="From" name="fromUser" value="" onkeyup="data(name, value)" />
+    <input id="toUser" autocomplete="off" placeholder="To" name="toUser" value="" />
+    <input id="message" autocomplete="off" placeholder="message ..." name="message" value="" />
     <button>Send</button>
   </form>
 </body>

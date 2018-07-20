@@ -10,7 +10,6 @@ router.post("/create", async (req, res) => {
   if (!verifyUserName) {
     const user = await userApi.createUser(userData);
     if (user) {
-      console.log("user", user);
       res.status(200).send("user is Succesfully register");
     }
   } else {
