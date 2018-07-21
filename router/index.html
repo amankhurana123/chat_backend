@@ -55,59 +55,77 @@
   </style>
 
   <script src="/socket.io/socket.io.js"></script>
+
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
   <script>
-    data = (name, value) => {
-      const params = JSON.stringify(encodeURI({ name: value }));
-      fetch("/chat/chatdata/?" + params, {
+    let socket = io();
+    function api(url, method) {
+      // fetch(url, method)
+      //   .then(response => {
+      //     response.json().then(function (json) {
+      //       json.map((item, index) => {
+      //         let { formUser, toUser, message } = item
+      //         return $('#messages').append($('<li>').text(`${formUser.username == $('#formUser').val() ? toUser.name : formUser.name} : ${message}`))
+      //       })
+      //     })
+      //   }).catch(error => {
+      //     console.log("error", error)
+      //   })
+    }
+    function data(value) {
+      const params = encodeURI(JSON.stringify({ username: value }));
+      api("http://localhost:3000/chat/chatdata/?params=" + params, {
         method: 'get'
-      }
-      ).then(response => {
-        return console.log("response", response);
-      }).catch(error => {
-        console.log("error", error);
       })
     }
-    $(function () {
-      let socket = io();
-      // $('form').submit(() => {
-      // socket.emit('chat message', $('#message').val(), $('#formUser').val(), $('#toUser').val(), $(location).attr("href"))
-      // $('#message').val('');
-      // $('#formUser').val();
-      // $('#toUser').val();
-      // return false;
-      // })
-      let formData = $('#formUser').val();
-      $('#formUser').ready(() => {
-        $('#formUser').keyup((formData) => {
-          action = "http://localhost:3000/chat/chatdata"
-          method = "post"
-        });
 
+    submit = () => {
+      // const body = new FormData();
+      // body.append('formUser', $('#formUser').val())
+      // body.append('toUser', $('#toUser').val())
+      // body.append('message', $('#message').val())
+      const url = "http://localhost:3000/chat/messages";
+      console.log('====================================');
+      console.log(url);
+      console.log('====================================');
+      //socket.emit("chat", $('#formUser').val(), $('#toUser').val());
+
+      // socket.on(`chat${($('#formUser').val() || $('#toUser').val())}`, (name, msg) => {
+      //   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+      //   console.log(name, msg);
+      //   console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
+
+      //   $('#messages').append($('<li>').text(`${name} : ${msg}`))
+      //})
+      fetch("http://localhost:3000/chat/messages", {
+        method: 'post',
+        mode: 'cors',
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'multipart/form-data'
+        },
+
+      }).then(response => {
+        console.log(response);
+        console.log('====================================');
+        console.log("2", url);
+      }).catch(error => {
+        console.log("error>>", error)
+        console.log('====================================');
+        console.log("1", url);
       })
-      socket.on('chat messages display', (msg, name, url) => {
-        $('form').ready(() => {
-          $(location).attr("href") == url &&
-            $('#messages').append($('<li>').text(`${name} : ${msg}`))
-        })
-      })
-      // $($(location).attr("href")).unload(() => {
-      socket.on('chat', () => { })
-      // (msg, toUser, toUsername, fromUsername, fromUser, url) => {
-      //   ($('#formUser').val() == toUsername || $('#formUser').val() == fromUsername) && $('#messages').append($('<li>').text(`${$(location).attr("href") == url ? toUser : fromUser} : ${msg}`))
-      // })
-      // })
-    });
+    }
+
   </script>
 </head>
 
 <body>
   <ul id="messages"></ul>
-  <form action="http://localhost:3000/chat/messages" method="post">
-    <input id="formUser" autocomplete="off" placeholder="From" name="fromUser" value="" onkeyup="data(name, value)" />
+  <form>
+    <input id="formUser" autocomplete="off" placeholder="From" name="fromUser" value="" onkeyup="data(value)" />
     <input id="toUser" autocomplete="off" placeholder="To" name="toUser" value="" />
     <input id="message" autocomplete="off" placeholder="message ..." name="message" value="" />
-    <button>Send</button>
+    <button onsubmit="submit()">Send</button>
   </form>
 </body>
 

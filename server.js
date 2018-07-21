@@ -12,10 +12,7 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(bodyParser.json());
-mongoose.connect(
-  "mongodb://localhost:27017/chat",
-  { useNewUrlParser: true }
-);
+mongoose.connect("mongodb://localhost:27017/chat");
 
 app.use("/user", router);
 app.use("/chat", chatRouter);
@@ -26,8 +23,33 @@ server.listen(3000, () => {
 const io = socket(server);
 
 io.on("connection", async function(socket) {
+  socket.on("chat", async (formUser, toUser) => {
+    console.log(
+      "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
+    );
+    const verifyFromUser = await userApi.getUsername(formUser);
+    if (verifyFromUser) {
+      const verifyToUser = await userApi.getUsername(toUser);
+      if (verifyToUser) {
+        const chat = await chatApi.chatMessageData({
+          formUser: verifyFromUser._id,
+          toUser: verifyToUser._id
+        });
+
+        io.emit(
+          `chat${chat[0].formUser.username}`,
+          chat[0].toUser.name,
+          chat[0].messages
+        );
+        io.emit(
+          `chat${chat[0].toUser.username}`,
+          chat[0].formUser.name,
+          chat[0].messages
+        );
+      }
+    }
+  });
   // socket.on("chat", async function() {
-  console.log("connection coll");
   // const chatdata = await chatApi.chatMessage({});
   // console.log("data>>>>>>>>>>>", chatdata);
   // chatdata.map(item => {

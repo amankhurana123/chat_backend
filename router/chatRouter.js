@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.post("/messages", async (req, res) => {
   const messages = req.body;
-
+  console.log("message", messages);
   const verifyFromUser = await userApi.getUsername(messages.fromUser);
   if (verifyFromUser) {
     const verifyToUser = await userApi.getUsername(messages.toUser);
@@ -16,32 +16,28 @@ router.post("/messages", async (req, res) => {
         message: messages.message
       });
       if (chat) {
-        res.status(200).sendFile(__dirname + "/index.html");
+        res.status(200).send("saved");
       } else {
-        console.log("chat", chat);
-
-        res.status(500).send("no chat");
+        res.status(500).send();
       }
     }
   }
 });
 router.get("/chatdata", async (req, res) => {
-  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-
-  console.log("chat server", decodeURI(JSON.parse(req.query.params)));
-  // const verifyFromUser = await userApi
-  //   .getUsername
-  //   // JSON.parse(req.query.params).name
-  //   ();
-  // if (verifyFromUser) {
-  //   // const message = await chatApi.chatMessage(verifyFromUser._id);
-  //   if (message) {
-  //     console.log(message);
-  //     res.status(200).send(message);
-  //   } else {
-  //     res.status(500).send();
-  //   }
-  // }
+  const { username } = JSON.parse(req.query.params);
+  const verifyFromUser = await userApi.getUsername(username);
+  if (verifyFromUser) {
+    const message = await chatApi.chatMessage(verifyFromUser._id);
+    if (message) {
+      console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::");
+      console.log(message);
+      console.log("====================================");
+      res.send(message);
+    } else {
+      console.log("not send");
+      res.send("error");
+    }
+  }
 });
 
 export default router;
