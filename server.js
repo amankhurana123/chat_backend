@@ -1,7 +1,11 @@
 import express from "express";
 import socket from "socket.io";
+import session from "express-session";
+import connectMongo from "connect-mongo";
+import passport from "passport";
 import http from "http";
 import mongoose from "mongoose";
+import cors from "cors";
 import bodyParser from "body-parser";
 import router from "./router/userRouter";
 import chatRouter from "./router/chatRouter";
@@ -9,16 +13,43 @@ import userApi from "./api/userApi";
 import chatApi from "./api/chatApi";
 
 const app = express();
-app.use(bodyParser.urlencoded({ extended: true }));
-
 app.use(bodyParser.json());
-mongoose.connect("mongodb://localhost:27017/chat");
+app.use(bodyParser.urlencoded({ extended: false }));
+let mongoStore = connectMongo(session);
+
+app.use(
+  cors({
+    allowedOrigins: ["http://localhost:3000", "http://192.168.100.76:3000"],
+    credentials: true
+  })
+);
+
+app.use(
+  session({
+    secret: "ChatSessionKey",
+    store: new mongoStore({ mongooseConnection: mongoose.connection }),
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      secure: false,
+      maxAge: 30 * 24 * 60 * 60 * 1000
+    } //30 days
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+mongoose.connect(
+  "mongodb://localhost:27017/chat",
+  { useNewUrlParser: true }
+);
 
 app.use("/user", router);
 app.use("/chat", chatRouter);
 const server = http.Server(app);
-server.listen(3000, () => {
-  console.log("server is running at 3000....");
+server.listen(8081, () => {
+  console.log("server is running at 8081....");
 });
 const io = socket(server);
 
@@ -49,52 +80,4 @@ io.on("connection", async function(socket) {
       }
     }
   });
-  // socket.on("chat", async function() {
-  // const chatdata = await chatApi.chatMessage({});
-  // console.log("data>>>>>>>>>>>", chatdata);
-  // chatdata.map(item => {
-  //   let {} = item;
-  //   return io.emit(
-  //     `chat${item.formUser.username}`,
-  //     message,
-  //     item.formUser.username
-  //   );
-  //    io.emit(`chat${item.toUser.username}`, {});
-  // });
-  // const verifyFromUser = await userApi.getUsername(formUser);
-  // if (verifyFromUser) {
-  //   const verifyToUser = await userApi.getUsername(toUser);
-  //   if (verifyToUser) {
-  //     const chat = await chatApi.chatData({
-  //       formUser: verifyFromUser._id,
-  //       toUser: verifyToUser._id,
-  //       message
-  //     });
-  // io.emit(
-  //   "chat messages",
-  //   chat.message,
-  //   verifyToUser.name,
-  //   verifyToUser.username,
-  //   verifyFromUser.username,
-  //   verifyFromUser.name,
-  //   url
-  // );
-  // }
-  // });
-  // socket.on("chat schema", async (username, url) => {
-  //   const verifyUser = await userApi.getUsername(username);
-  //   if (verifyUser) {
-  //     const chatdata = await chatApi.chatMessage(verifyUser._id);
-  //     chatdata.map(item => {
-  //       return io.emit(
-  //         "chat messages display",
-  //         item.message,
-  //         verifyUser._id.toString() == item.formUser._id.toString()
-  //           ? item.toUser.name
-  //           : item.formUser.name,
-  //         url
-  //       );
-  //     });
-  //   }
-  // });
 });

@@ -74,17 +74,17 @@
     }
     function data(value) {
       const params = encodeURI(JSON.stringify({ username: value }));
-      api("http://localhost:3000/chat/chatdata/?params=" + params, {
+      api("http://localhost:3001/chat/chatdata/?params=" + params, {
         method: 'get'
       })
     }
 
     submit = () => {
-      // const body = new FormData();
+      // let body = new FormData();
       // body.append('formUser', $('#formUser').val())
       // body.append('toUser', $('#toUser').val())
       // body.append('message', $('#message').val())
-      const url = "http://localhost:3000/chat/messages";
+      const url = "http://localhost:300/chat/messages";
       console.log('====================================');
       console.log(url);
       console.log('====================================');
@@ -97,14 +97,14 @@
 
       //   $('#messages').append($('<li>').text(`${name} : ${msg}`))
       //})
-      fetch("http://localhost:3000/chat/messages", {
+      fetch("http://localhost:3001/chat/messages", {
         method: 'post',
-        mode: 'cors',
         headers: {
           'Access-Control-Allow-Origin': '*',
           'Content-Type': 'multipart/form-data'
-        },
 
+        },
+        body
       }).then(response => {
         console.log(response);
         console.log('====================================');
@@ -121,11 +121,11 @@
 
 <body>
   <ul id="messages"></ul>
-  <form>
+  <form action="/chat/messages" method="POST">
     <input id="formUser" autocomplete="off" placeholder="From" name="fromUser" value="" onkeyup="data(value)" />
     <input id="toUser" autocomplete="off" placeholder="To" name="toUser" value="" />
     <input id="message" autocomplete="off" placeholder="message ..." name="message" value="" />
-    <button onsubmit="submit()">Send</button>
+    <button onclick="submit()">Send</button>
   </form>
 </body>
 

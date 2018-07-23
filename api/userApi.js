@@ -3,13 +3,12 @@ import userSchema from "../schema/userSchema";
 module.exports = {
   getUsername: data => {
     return new Promise((resolve, reject) => {
-      userSchema.findOne({ username: data }, (error, result) => {
-        if (!result) {
-          resolve(error);
-        } else {
-          resolve(result);
-        }
-      });
+      userSchema
+        .findOne({ email: data })
+        .then(result => resolve(result))
+        .catch(error => {
+          reject();
+        });
     });
   },
 
@@ -22,13 +21,26 @@ module.exports = {
 
   createUser: data => {
     return new Promise((resolve, reject) => {
-      userSchema.create(data, (error, result) => {
-        if (result) {
+      userSchema
+        .create(data)
+        .then(result => {
           resolve(result);
-        } else {
+        })
+        .catch(error => {
           reject();
-        }
-      });
+        });
+    });
+  },
+  getUserVerification: data => {
+    return new Promise((resolve, result) => {
+      userSchema
+        .findOne(data)
+        .then(result => {
+          resolve(result);
+        })
+        .catch(error => {
+          reject();
+        });
     });
   }
 };
