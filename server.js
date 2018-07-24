@@ -54,6 +54,11 @@ server.listen(8081, () => {
 const io = socket(server);
 
 io.on("connection", async function(socket) {
+  console.log("====================================");
+  console.log(
+    ">>>>>>>>>>>>>>>>>>>>>>>>>>>connect socket<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+  );
+  console.log("====================================");
   socket.on("chat", async (formUser, toUser) => {
     console.log(
       "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"

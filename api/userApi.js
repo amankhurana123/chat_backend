@@ -42,5 +42,17 @@ module.exports = {
           reject();
         });
     });
+  },
+  getUser: data => {
+    return new Promise((resolve, reject) => {
+      userSchema
+        .find({ _id: { $ne: data } })
+        .then(result => {
+          resolve(result);
+        })
+        .catch(error => {
+          reject();
+        });
+    });
   }
 };

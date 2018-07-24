@@ -37,4 +37,17 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.get("/getUser", async (req, res) => {
+  const userID = JSON.parse(req.query.params);
+
+  const user = await userApi.getUser(userID);
+  console.log("====================================");
+  console.log("user are", user);
+  console.log("====================================");
+  if (user.length) {
+    res.status(200).send(user);
+  } else {
+    res.status(500).end();
+  }
+});
 export default router;
