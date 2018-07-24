@@ -14,6 +14,7 @@ router.post("/create", async (req, res) => {
   if (!verifyEmail) {
     const user = await userApi.createUser(users);
     if (user) {
+      console.log("user1",user);
       res.status(200).send("user is Succesfully register");
     }
   } else {
@@ -37,4 +38,9 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.get("/logout", (req, res) => {
+  
+  req.logout();
+  res.status(200).send(res);
+});
 export default router;
