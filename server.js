@@ -19,7 +19,7 @@ let mongoStore = connectMongo(session);
 
 app.use(
   cors({
-    allowedOrigins: ["http://localhost:3000", "http://192.168.100.76:3000"],
+    allowedOrigins: ["http://localhost:3000"],
     credentials: true
   })
 );
@@ -47,42 +47,42 @@ mongoose.connect(
 
 app.use("/user", router);
 app.use("/chat", chatRouter);
-const server = http.Server(app);
-server.listen(8081, () => {
+app.listen(8081, () => {
   console.log("server is running at 8081....");
 });
-const io = socket(server);
+  // const server = http.Server(app);
+  // const io = socket(server);
 
-io.on("connection", async function(socket) {
-  console.log("====================================");
-  console.log(
-    ">>>>>>>>>>>>>>>>>>>>>>>>>>>connect socket<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-  );
-  console.log("====================================");
-  socket.on("chat", async (formUser, toUser) => {
-    console.log(
-      "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
-    );
-    const verifyFromUser = await userApi.getUsername(formUser);
-    if (verifyFromUser) {
-      const verifyToUser = await userApi.getUsername(toUser);
-      if (verifyToUser) {
-        const chat = await chatApi.chatMessageData({
-          formUser: verifyFromUser._id,
-          toUser: verifyToUser._id
-        });
+  // io.on("connection", async function(socket) {
+  //   console.log("====================================");
+  //   console.log(
+  //     ">>>>>>>>>>>>>>>>>>>>>>>>>>>connect socket<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+  //   );
+  //   console.log("====================================");
+  //   socket.on("chat", async (formUser, toUser) => {
+  //     console.log(
+  //       "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
+  //     );
+  //     const verifyFromUser = await userApi.getUsername(formUser);
+  //     if (verifyFromUser) {
+  //       const verifyToUser = await userApi.getUsername(toUser);
+  //       if (verifyToUser) {
+  //         const chat = await chatApi.chatMessageData({
+  //           formUser: verifyFromUser._id,
+  //           toUser: verifyToUser._id
+  //         });
 
-        io.emit(
-          `chat${chat[0].formUser.username}`,
-          chat[0].toUser.name,
-          chat[0].messages
-        );
-        io.emit(
-          `chat${chat[0].toUser.username}`,
-          chat[0].formUser.name,
-          chat[0].messages
-        );
-      }
-    }
-  });
-});
+  //         io.emit(
+  //           `chat${chat[0].formUser.username}`,
+  //           chat[0].toUser.name,
+  //           chat[0].messages
+  //         );
+  //         io.emit(
+  //           `chat${chat[0].toUser.username}`,
+  //           chat[0].formUser.name,
+  //           chat[0].messages
+  //         );
+  //       }
+  //     }
+  //   });
+  // });
