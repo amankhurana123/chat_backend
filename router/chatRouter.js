@@ -1,42 +1,55 @@
 import express from "express";
 import chatApi from "../api/chatApi";
-import userApi from "../api/userApi";
+import { apiInstance } from "../utilities/utility";
+import axios from "axios";
+import { isString } from "lodash";
+
 const router = express.Router();
 
 router.post("/messages", async (req, res) => {
   const messages = req.body;
   console.log("message", messages);
-  const verifyFromUser = await userApi.getUsername(messages.fromUser);
-  if (verifyFromUser) {
-    const verifyToUser = await userApi.getUsername(messages.toUser);
-    if (verifyToUser) {
-      const chat = await chatApi.chatData({
-        formUser: verifyFromUser._id,
-        toUser: verifyToUser._id,
-        message: messages.message
+
+  const chat = await chatApi.chatData(messages);
+  console.log("===============================================");
+
+  console.log("chat", isString(chat));
+  console.log("============================================");
+  if (chat) {
+    // const headers = {
+    //   "content-type": "application/json",
+    //   Accept: "application/json"
+    // };
+    // console.log("headers-----------", headers);
+    let data = chat;
+    const options = {
+      method: "post",
+      url: "/notify",
+      data
+    };
+    console.log("the options are", options);
+    apiInstance(options)
+      .then(response => {
+        console.log("resonpone-0--------------", response);
+        res.status(200).send(chat);
+      })
+      .catch(error => {
+        console.error("error", error);
       });
-      if (chat) {
-        res.status(200).send("saved");
-      } else {
-        res.status(500).send();
-      }
-    }
+  } else {
+    res.status(500).end();
   }
 });
 router.get("/chatdata", async (req, res) => {
-  const { username } = JSON.parse(req.query.params);
-  const verifyFromUser = await userApi.getUsername(username);
-  if (verifyFromUser) {
-    const message = await chatApi.chatMessage(verifyFromUser._id);
-    if (message) {
-      console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::");
-      console.log(message);
-      console.log("====================================");
-      res.send(message);
-    } else {
-      console.log("not send");
-      res.send("error");
-    }
+  const { fromUser, toUser } = JSON.parse(req.query.params);
+  const message = await chatApi.chatMessage(fromUser, toUser);
+  console.log("===================================================");
+  console.log("message", message);
+  console.log("===================================================");
+  if (message.length) {
+    res.send(message);
+  } else {
+    res.status(200).end();
   }
 });
 
