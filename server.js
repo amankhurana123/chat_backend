@@ -1,16 +1,12 @@
 import express from "express";
-import socket from "socket.io";
 import session from "express-session";
 import connectMongo from "connect-mongo";
 import passport from "passport";
-import http from "http";
 import mongoose from "mongoose";
-import cors from "cors";
+import cors from "express-cors";
 import bodyParser from "body-parser";
 import router from "./router/userRouter";
 import chatRouter from "./router/chatRouter";
-import userApi from "./api/userApi";
-import chatApi from "./api/chatApi";
 
 const app = express();
 app.use(bodyParser.json());
@@ -19,7 +15,7 @@ let mongoStore = connectMongo(session);
 
 app.use(
   cors({
-    allowedOrigins: ["http://localhost:3000", "http://192.168.100.76:3000"],
+    allowedOrigins: ["http://localhost:3000", "http://localhost:8080"],
     credentials: true
   })
 );
@@ -47,42 +43,42 @@ mongoose.connect(
 
 app.use("/user", router);
 app.use("/chat", chatRouter);
-const server = http.Server(app);
-server.listen(8081, () => {
+// const server = http.Server(app);
+app.listen(8081, () => {
   console.log("server is running at 8081....");
 });
-const io = socket(server);
+// const io = socket(server);
 
-io.on("connection", async function(socket) {
-  console.log("====================================");
-  console.log(
-    ">>>>>>>>>>>>>>>>>>>>>>>>>>>connect socket<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-  );
-  console.log("====================================");
-  socket.on("chat", async (formUser, toUser) => {
-    console.log(
-      "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
-    );
-    const verifyFromUser = await userApi.getUsername(formUser);
-    if (verifyFromUser) {
-      const verifyToUser = await userApi.getUsername(toUser);
-      if (verifyToUser) {
-        const chat = await chatApi.chatMessageData({
-          formUser: verifyFromUser._id,
-          toUser: verifyToUser._id
-        });
+// io.on("connection", async function(socket) {
+//   console.log("====================================");
+//   console.log(
+//     ">>>>>>>>>>>>>>>>>>>>>>>>>>>connect socket<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+//   );
+//   console.log("====================================");
+//   socket.on("chat", async (fromUser, toUser) => {
+//     console.log(
+//       "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
+//     );
+//     const verifyFromUser = await userApi.getUsername(fromUser);
+//     if (verifyFromUser) {
+//       const verifyToUser = await userApi.getUsername(toUser);
+//       if (verifyToUser) {
+//         const chat = await chatApi.chatMessageData({
+//           fromUser: verifyFromUser._id,
+//           toUser: verifyToUser._id
+//         });
 
-        io.emit(
-          `chat${chat[0].formUser.username}`,
-          chat[0].toUser.name,
-          chat[0].messages
-        );
-        io.emit(
-          `chat${chat[0].toUser.username}`,
-          chat[0].formUser.name,
-          chat[0].messages
-        );
-      }
-    }
-  });
-});
+//         io.emit(
+//           `chat${chat[0].fromUser.username}`,
+//           chat[0].toUser.name,
+//           chat[0].messages
+//         );
+//         io.emit(
+//           `chat${chat[0].toUser.username}`,
+//           chat[0].fromUser.name,
+//           chat[0].messages
+//         );
+//       }
+//     }
+//   });
+// });

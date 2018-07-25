@@ -20,7 +20,6 @@ module.exports = {
   },
 
   createUser: data => {
-console.log("data", data)
     return new Promise((resolve, reject) => {
       userSchema
         .create(data)

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 const chatSchema = mongoose.Schema({
-  formUser: {
+  fromUser: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "userSchema",
     require: true

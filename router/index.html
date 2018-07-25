@@ -64,8 +64,8 @@
       //   .then(response => {
       //     response.json().then(function (json) {
       //       json.map((item, index) => {
-      //         let { formUser, toUser, message } = item
-      //         return $('#messages').append($('<li>').text(`${formUser.username == $('#formUser').val() ? toUser.name : formUser.name} : ${message}`))
+      //         let { fromUser, toUser, message } = item
+      //         return $('#messages').append($('<li>').text(`${fromUser.username == $('#fromUser').val() ? toUser.name : fromUser.name} : ${message}`))
       //       })
       //     })
       //   }).catch(error => {
@@ -81,16 +81,16 @@
 
     submit = () => {
       // let body = new FormData();
-      // body.append('formUser', $('#formUser').val())
+      // body.append('fromUser', $('#fromUser').val())
       // body.append('toUser', $('#toUser').val())
       // body.append('message', $('#message').val())
       const url = "http://localhost:300/chat/messages";
       console.log('====================================');
       console.log(url);
       console.log('====================================');
-      //socket.emit("chat", $('#formUser').val(), $('#toUser').val());
+      //socket.emit("chat", $('#fromUser').val(), $('#toUser').val());
 
-      // socket.on(`chat${($('#formUser').val() || $('#toUser').val())}`, (name, msg) => {
+      // socket.on(`chat${($('#fromUser').val() || $('#toUser').val())}`, (name, msg) => {
       //   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
       //   console.log(name, msg);
       //   console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
@@ -122,7 +122,7 @@
 <body>
   <ul id="messages"></ul>
   <form action="/chat/messages" method="POST">
-    <input id="formUser" autocomplete="off" placeholder="From" name="fromUser" value="" onkeyup="data(value)" />
+    <input id="fromUser" autocomplete="off" placeholder="From" name="fromUser" value="" onkeyup="data(value)" />
     <input id="toUser" autocomplete="off" placeholder="To" name="toUser" value="" />
     <input id="message" autocomplete="off" placeholder="message ..." name="message" value="" />
     <button onclick="submit()">Send</button>

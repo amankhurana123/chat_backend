@@ -4,9 +4,7 @@ import userApi from "../api/userApi";
 const router = express.Router();
 
 router.post("/create", async (req, res) => {
-  console.log(req.body);
   const users = req.body;
-  console.log(users);
   const verifyEmail = await userApi.getUsername(users.email);
   console.log("====================================");
   console.log(verifyEmail);
@@ -18,7 +16,7 @@ router.post("/create", async (req, res) => {
       res.status(200).send("user is Succesfully register");
     }
   } else {
-    res.status(500).send("not register");
+    res.status(500).end();
   }
 });
 
@@ -34,7 +32,7 @@ router.post("/login", async (req, res) => {
   if (verifyUser) {
     res.status(200).send(verifyUser);
   } else {
-    res.status(500).end();
+    res.status(200).send();
   }
 });
 

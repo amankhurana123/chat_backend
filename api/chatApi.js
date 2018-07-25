@@ -12,11 +12,13 @@ module.exports = {
       });
     });
   },
-  chatMessage: data => {
+  chatMessage: (fromUser, toUser) => {
     return new Promise((resolve, reject) => {
       chatSchema
-        .find({ $or: [{ formUser: data }, { toUser: data }] })
-        .populate(["formUser", "toUser"])
+        .find({
+          $or: [{ fromUser, toUser }, { fromUser: toUser, toUser: fromUser }]
+        })
+        .populate(["fromUser", "toUser"])
         .sort({ _id: 1 })
         .then(result => {
           resolve(result);
@@ -27,7 +29,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       chatSchema
         .find(data)
-        .populate(["formUser", "toUser"])
+        .populate(["fromUser", "toUser"])
         .sort({ _id: -1 })
         .then(result => {
           resolve(result);
