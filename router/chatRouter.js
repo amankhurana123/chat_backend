@@ -21,21 +21,21 @@ router.post("/messages", async (req, res) => {
     //   Accept: "application/json"
     // };
     // console.log("headers-----------", headers);
-    let data = chat;
+    let data = { groupId: `chat_${chat.toUser}`, data: chat };
     const options = {
       method: "post",
-      url: "/notify",
+      url: "/notifySocket",
       data
     };
     console.log("the options are", options);
     apiInstance(options)
       .then(response => {
         console.log("resonpone-0--------------", response);
-        res.status(200).send(chat);
       })
       .catch(error => {
         console.error("error", error);
       });
+    res.status(200).send(chat);
   } else {
     res.status(500).end();
   }
