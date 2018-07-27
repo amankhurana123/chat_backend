@@ -1,13 +1,25 @@
 import express from "express";
+import multer from "multer";
 import chatApi from "../api/chatApi";
 import { apiInstance } from "../utilities/utility";
-import axios from "axios";
 import { isString } from "lodash";
 
 const router = express.Router();
 
-router.post("/messages", async (req, res) => {
-  const messages = req.body;
+let storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "upload");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + file.originalname);
+  }
+});
+let upload = multer({ storage: storage });
+
+router.post("/messages", upload.single("message"), async (req, res) => {
+  console.log("photo", req.file);
+  let messages = req.body;
+  messages.message = req.file.filename;
   console.log("message", messages);
 
   const chat = await chatApi.chatData(messages);

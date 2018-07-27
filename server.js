@@ -9,17 +9,14 @@ import router from "./router/userRouter";
 import chatRouter from "./router/chatRouter";
 
 const app = express();
+app.use(express.static("upload"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 let mongoStore = connectMongo(session);
 
 app.use(
   cors({
-<<<<<<< HEAD
-    allowedOrigins: ["http://localhost:3000"],
-=======
     allowedOrigins: ["http://localhost:3000", "http://localhost:8080"],
->>>>>>> 71351835d57d71b86c529c9c9216fa091f24d1b4
     credentials: true
   })
 );
@@ -47,47 +44,6 @@ mongoose.connect(
 
 app.use("/user", router);
 app.use("/chat", chatRouter);
-<<<<<<< HEAD
-app.listen(8081, () => {
-  console.log("server is running at 8081....");
-});
-  // const server = http.Server(app);
-  // const io = socket(server);
-
-  // io.on("connection", async function(socket) {
-  //   console.log("====================================");
-  //   console.log(
-  //     ">>>>>>>>>>>>>>>>>>>>>>>>>>>connect socket<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-  //   );
-  //   console.log("====================================");
-  //   socket.on("chat", async (formUser, toUser) => {
-  //     console.log(
-  //       "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
-  //     );
-  //     const verifyFromUser = await userApi.getUsername(formUser);
-  //     if (verifyFromUser) {
-  //       const verifyToUser = await userApi.getUsername(toUser);
-  //       if (verifyToUser) {
-  //         const chat = await chatApi.chatMessageData({
-  //           formUser: verifyFromUser._id,
-  //           toUser: verifyToUser._id
-  //         });
-
-  //         io.emit(
-  //           `chat${chat[0].formUser.username}`,
-  //           chat[0].toUser.name,
-  //           chat[0].messages
-  //         );
-  //         io.emit(
-  //           `chat${chat[0].toUser.username}`,
-  //           chat[0].formUser.name,
-  //           chat[0].messages
-  //         );
-  //       }
-  //     }
-  //   });
-  // });
-=======
 // const server = http.Server(app);
 app.listen(8081, () => {
   console.log("server is running at 8081....");
@@ -127,4 +83,3 @@ app.listen(8081, () => {
 //     }
 //   });
 // });
->>>>>>> 71351835d57d71b86c529c9c9216fa091f24d1b4

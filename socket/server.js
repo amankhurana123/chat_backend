@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import http from "http";
 
 const app = express();
-
+app.use(express.static("upload"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
