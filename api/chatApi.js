@@ -12,14 +12,16 @@ module.exports = {
       });
     });
   },
-  chatMessage: (fromUser, toUser) => {
+  chatMessage: (fromUser, toUser, option) => {
     return new Promise((resolve, reject) => {
       chatSchema
         .find({
           $or: [{ fromUser, toUser }, { fromUser: toUser, toUser: fromUser }]
         })
         .populate(["fromUser", "toUser"])
-        .sort({ _id: 1 })
+        .sort(option.sort)
+        .limit(option.limit)
+        .skip(option.skip)
         .then(result => {
           resolve(result);
         });

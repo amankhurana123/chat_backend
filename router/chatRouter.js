@@ -17,22 +17,14 @@ let storage = multer.diskStorage({
 let upload = multer({ storage: storage });
 
 router.post("/messages", upload.single("message"), async (req, res) => {
-  console.log("photo", req.file);
   let messages = req.body;
-  messages.message = req.file.filename;
+  if (req.file) {
+    messages.message = req.file.filename;
+  }
   console.log("message", messages);
-
   const chat = await chatApi.chatData(messages);
-  console.log("===============================================");
 
-  console.log("chat", isString(chat));
-  console.log("============================================");
   if (chat) {
-    // const headers = {
-    //   "content-type": "application/json",
-    //   Accept: "application/json"
-    // };
-    // console.log("headers-----------", headers);
     let data = { groupId: `chat_${chat.toUser}`, data: chat };
     const options = {
       method: "post",
@@ -53,8 +45,9 @@ router.post("/messages", upload.single("message"), async (req, res) => {
   }
 });
 router.get("/chatdata", async (req, res) => {
-  const { fromUser, toUser } = JSON.parse(req.query.params);
-  const message = await chatApi.chatMessage(fromUser, toUser);
+  const { fromUser, toUser, option } = JSON.parse(req.query.params);
+  console.log("req,parmas", fromUser, toUser, option);
+  const message = await chatApi.chatMessage(fromUser, toUser, option);
   console.log("===================================================");
   console.log("message", message);
   console.log("===================================================");

@@ -1,6 +1,8 @@
 import express from "express";
 import session from "express-session";
 import connectMongo from "connect-mongo";
+import fs from "fs";
+import path from "path";
 import passport from "passport";
 import mongoose from "mongoose";
 import cors from "express-cors";
@@ -12,6 +14,12 @@ const app = express();
 app.use(express.static("upload"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+// let imageDirectory = path.join(__dirname, "upload");
+
+// if (!fs.existsSync(imageDirectory)) {
+//   fs.mkdirSync(imageDirectory);
+// }
+
 let mongoStore = connectMongo(session);
 
 app.use(
