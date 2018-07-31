@@ -18,6 +18,7 @@ let upload = multer({ storage: storage });
 
 router.post("/messages", upload.single("message"), async (req, res) => {
   let messages = req.body;
+  console.log("message", messages);
   if (req.file) {
     messages.message = req.file.filename;
   }
@@ -34,7 +35,7 @@ router.post("/messages", upload.single("message"), async (req, res) => {
     console.log("the options are", options);
     apiInstance(options)
       .then(response => {
-        console.log("resonpone-0--------------", response);
+        // console.log("resonpone-0--------------", response);
       })
       .catch(error => {
         console.error("error", error);

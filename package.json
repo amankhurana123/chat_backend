@@ -25,6 +25,8 @@
     "express-cors": "0.0.3",
     "express-session": "^1.15.6",
     "fs": "0.0.1-security",
+    "fs-extra": "^7.0.0",
+    "gridfs-stream": "^1.1.1",
     "http": "0.0.0",
     "lodash": "^4.17.10",
     "mongoose": "^5.2.4",

@@ -11,14 +11,14 @@ import router from "./router/userRouter";
 import chatRouter from "./router/chatRouter";
 
 const app = express();
-app.use(express.static("upload"));
+// app.use(express.static("upload"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-// let imageDirectory = path.join(__dirname, "upload");
+let imageDirectory = path.join(__dirname, "upload");
 
-// if (!fs.existsSync(imageDirectory)) {
-//   fs.mkdirSync(imageDirectory);
-// }
+if (!fs.existsSync(imageDirectory)) {
+  fs.mkdirSync(imageDirectory);
+}
 
 let mongoStore = connectMongo(session);
 
